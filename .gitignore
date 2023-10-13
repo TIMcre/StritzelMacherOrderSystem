@@ -1,6 +1,6 @@
 
 /workspaces/StritzelMacherOrderSystem/.devcontainer
-
+order_history.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
