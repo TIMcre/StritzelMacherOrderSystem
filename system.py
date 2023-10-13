@@ -15,7 +15,7 @@ stritzel_outside_sorts = {
 }
 
 stritzel_inside_sorts = {
-    "0": "",
+    "0": "Ohne",
     "1": "Nutella",
     "2": "Weiße Schokoloade",
     "3": "Apfelmus",
@@ -24,7 +24,8 @@ stritzel_inside_sorts = {
 # -----------------------------------
 import sys
 import re
-import time
+import csv
+from datetime import datetime
 
 
 def convert_to_name(outside, inside):
@@ -52,9 +53,20 @@ def remove_order(order_list, order_number=0):
     return {"list": order_list, "order": removed_order}
 
 
-def add_history(order, file="order_history.csv"):
-    with open(file, "a"):
-        file.write([order["number"], order["inside"]])
+def add_history(order, file_name="order_history.csv"):
+    fieldnames = ["order_outside", "order_inside", "order_time"]
+
+    with open(file_name, mode="a", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+        if file.tell() == 0:
+            writer.writeheader()  # Write headers if the file is empty
+
+        writer.writerow({
+            "order_outside": order["outside_sort"],
+            "order_inside": order["inside_sort"],
+            "order_time": datetime.now().strftime(r"%Y-%m-%d %H:%M:%S")
+        })
 
 
 def print_orders(orders, mode):
@@ -62,13 +74,14 @@ def print_orders(orders, mode):
     if mode == "production":
         for order in orders:
             print(f'{order["name"]["outside"]}')
-    elif mode == "serving":
-        for order in order:
-            print(f'Outside: {order["name"]["outside"]} Inside: {order["name"]["inside"]}')
+    elif mode == "service":
+        for order in orders:
+            print(f'{order["name"]["outside"]} mit {order["name"]["inside"]}')
 
 
 def is_valid_code(code):
-    if re.match(r"((0[0-9])|[1-9]{2})[0-3]", code) or code == "rm":
+    #old regex ((0[0-9])|[1-9]{2})[0-3]
+    if re.match(r"^((0[0-9])|[1-9]{2}|[1-9]0)[0-3]$", code) or code == "rm":
         return True
     return False
 
@@ -96,13 +109,14 @@ def main():
                 raise ValueError
 
             if input_code == "rm":
-                remove_order(order_list)
+                removed_order = remove_order(order_list)["order"]
+                add_history(removed_order)
 
             else:
                 order = convert_code_to_order(input_code)
-                order_list = add_order(order_list, order)
+                add_order(order_list, order)
 
-            print_orders(order_list, "production")
+            print_orders(order_list, "service")
 
         except ValueError:
             pass
