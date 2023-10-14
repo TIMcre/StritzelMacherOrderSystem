@@ -115,7 +115,7 @@ def main():
                 order = convert_code_to_order(input_code)
                 add_order(order_list, order)
 
-            print_orders(order_list, "service")
+            print_orders(order_list, mode="production")
 
         except ValueError:
             pass
