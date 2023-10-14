@@ -1,17 +1,16 @@
 stritzel_outside_sorts = {
     "0": "Vanille Zucker",
-    "1": "Zimt und Zucker",
+    "1": "Zimt Zucker",
     "2": "Oreo",
-    "3": "",
-    "4": "",
-    "5": "",
-    "6": "",
-    "7": "",
-    "8": "",
-    "9": "",
-    "10": "",
-    "11": "",
-    "12": "",
+    "3": "Raffaello",
+    "4": "Mandel",
+    "5": "Walnuss",
+    "6": "Haselnuss",
+    "7": "Buntestreusel",
+    "8": "Schokostreusel",
+    "9": "Kakao",
+    "10": "Cocos",
+    "11": "Lotus",
 }
 
 stritzel_inside_sorts = {
@@ -49,7 +48,7 @@ def remove_order(order_list, order_number=0):
         removed_order = order_list.pop(order_number)
     except:
         return None
-        
+            
     return {"list": order_list, "order": removed_order}
 
 
