@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Stritzel Orders Service</title>
+{% endblock %}
+    
+
+{% block body %}
+<h1>Stritzel Orders</h1>
+
+<div class="container">
+    <div class="left">
+        <form action="/submit" method="POST">    
+            <table>
+                <tr>
+                    <th>Outside</th>
+                    <th></th>
+                </tr>
+                {% for key, name in stritzel_outside_sorts.items() %}
+                    <tr>
+                        <td>
+                            {{ name }}
+                        </td>
+                        <td>
+                            <input type="radio" name="selected_outside" value="{{ key }}" {% if key == '0' %}checked{% endif %}>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+                
+            <table>
+                <tr>
+                    <th>Inside</th>
+                    <th></th>
+                </tr>
+                {% for key, name in stritzel_inside_sorts.items() %}
+                    <tr>
+                        <td>
+                            {{ name }}
+                        </td>
+                        <td>
+                            <input type="radio" name="selected_inside" value="{{ key }}" {% if key == '0' %}checked{% endif %}>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <input class="button" type="submit" value="Submit Order">        
+        </form>
+    </div>
+
+    <div class="right">
+        <h2>Current Orders:</h2>
+        {% if orders %}
+        <ul>
+            {% for order in orders %}
+            <li>{{ order.name.outside }} mit {{ order.name.inside }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+    </div>
+</div>
+
+
+
+
+<button class="button website-link" onclick="window.location.href='/production'">switch mode</button>
+
+
+{% endblock %}

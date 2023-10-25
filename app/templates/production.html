@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Stritzel Orders Production</title>
+{% endblock %}
+
+{% block body %}
+<h1>Stritzel Orders</h1>
+<div class="container">
+
+    <div class="left">
+        <h2>Current Orders:</h2>
+
+        {% if orders %}
+        <ul>
+            {% for order in orders %}
+                <li>{{ order.name.outside }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <div class="right">
+        <form action="/remove_oldest_order" method="POST">
+            <button type="submit" class="button" class="remove-button">Remove Oldest Order</button>
+        </form>
+    </div>
+</div>
+
+<button class="button website-link" onclick="window.location.href='/service'">switch mode</button>
+
+{% endblock %}
