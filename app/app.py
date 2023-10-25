@@ -18,7 +18,7 @@ stritzel_outside_sorts = {
 stritzel_inside_sorts = {
     "0": "Ohne",
     "1": "Nutella",
-    "2": "Weiße Schokoloade",
+    "2": "Weisse Schokoloade",
     "3": "Apfelmus",
 }
 
