@@ -1,4 +1,5 @@
-# This Python file uses the following encoding: utf-8
+# -*- coding: utf-8 -*-
+
 # -----------------------------------
 # Dictonary Part
 stritzel_outside_sorts = {
