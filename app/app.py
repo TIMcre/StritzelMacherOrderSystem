@@ -1,3 +1,5 @@
+# -----------------------------------
+# Dictonary Part
 stritzel_outside_sorts = {
     "0": "Vanille Zucker",
     "1": "Zimt Zucker",
@@ -21,10 +23,15 @@ stritzel_inside_sorts = {
 }
 
 # -----------------------------------
+# Function Part
+from flask import Flask, render_template, url_for, request, redirect
 import sys
 import re
 import csv
 from datetime import datetime
+
+app = Flask(__name__)
+order_list = []
 
 
 def convert_to_name(outside, inside):
@@ -48,7 +55,7 @@ def remove_order(order_list, order_number=0):
         removed_order = order_list.pop(order_number)
     except:
         return None
-            
+
     return {"list": order_list, "order": removed_order}
 
 
@@ -61,15 +68,18 @@ def add_history(order, file_name="order_history.csv"):
         if file.tell() == 0:
             writer.writeheader()  # Write headers if the file is empty
 
-        writer.writerow({
-            "order_outside": order["outside_sort"],
-            "order_inside": order["inside_sort"],
-            "order_time": datetime.now().strftime(r"%Y-%m-%d %H:%M:%S")
-        })
+        writer.writerow(
+            {
+                "order_outside": order["outside_sort"],
+                "order_inside": order["inside_sort"],
+                "order_time": datetime.now().strftime(r"%Y-%m-%d %H:%M:%S"),
+            }
+        )
 
 
 def print_orders(orders, mode):
     print()
+    print(orders)
     if mode == "production":
         for order in orders:
             print(f'{order["name"]["outside"]}')
@@ -79,7 +89,7 @@ def print_orders(orders, mode):
 
 
 def is_valid_code(code):
-    #old regex ((0[0-9])|[1-9]{2})[0-3]
+    # old regex ((0[0-9])|[1-9]{2})[0-3]
     if re.match(r"^((0[0-9])|[1-9]{2}|[1-9]0)[0-3]$", code) or code == "rm":
         return True
     return False
@@ -97,32 +107,63 @@ def convert_code_to_order(code):
     }
 
 
-def main():
-    order_list = []
+# -----------------------------------
+# Flask Part
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-    while True:
-        try:
-            input_code = str(input("Code: ")).strip()
 
-            if not is_valid_code(input_code):
-                raise ValueError
+@app.route("/history")
+def history():
+    return render_template("history.html,")
 
-            if input_code == "rm":
-                removed_order = remove_order(order_list)["order"]
-                add_history(removed_order)
 
-            else:
-                order = convert_code_to_order(input_code)
-                add_order(order_list, order)
+@app.route("/production")
+def production():
+    return render_template("production.html", orders=order_list)
 
-            print_orders(order_list, mode="production")
 
-        except ValueError:
-            pass
+@app.route("/service")
+def service():
+    return render_template(
+        "service.html",
+        orders=order_list,
+        stritzel_outside_sorts=stritzel_outside_sorts,
+        stritzel_inside_sorts=stritzel_inside_sorts,
+    )
 
-        except KeyboardInterrupt:
-            sys.exit("\n--Ended by user--")
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    selected_outside = str(request.form["selected_outside"])
+    selected_inside = str(request.form["selected_inside"])
+
+    print(selected_outside, selected_inside)
+
+    if (
+        selected_outside in stritzel_outside_sorts
+        and selected_inside in stritzel_inside_sorts
+    ):
+        code = f"{int(selected_outside):02}{int(selected_inside)}"
+        order = convert_code_to_order(code)
+        add_order(order_list, order)
+
+        print_orders(order_list, mode="service")
+
+        return redirect(url_for("service"))
+    else:
+        return "Invalid order selection."
+
+
+@app.route("/remove_oldest_order", methods=["POST"])
+def remove_oldest_order():
+    if order_list:
+        removed_order = remove_order(order_list)["order"]
+        add_history(removed_order)
+
+    return redirect(url_for("production"))
 
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)

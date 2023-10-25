@@ -1,5 +1,4 @@
-import system.py as test
-
-def test_main():
-    assert 
-
+selected_outside = "4"
+selected_inside = "2"
+code = f"{selected_outside:02}{selected_inside}"
+print(code)
