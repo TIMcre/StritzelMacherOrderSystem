@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Stritzel Orders Home</title>
+<style>
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
+.button-list {
+    list-style: none;
+    padding: 0;
+}
+
+.button-list li {
+    margin: 10px 0;
+    text-align: center;
+}
+</style>
+{% endblock %}
+    
+
+{% block body %}
+<h1>Welcome to the Home Page</h1>
+<div class="container">
+    <h3>Choose a mode:</h3>
+    <ul class="button-list">
+        <li><a href="/production" class="website-link"><button class="button">Production</button></a></li>
+        <li><a href="/service" class="website-link"><button class="button">Service</button></a></li>
+        <li><a href="/history" class="website-link"><button class="button">History</button></a></li>
+    </ul>
+</div>
+{% endblock %}
