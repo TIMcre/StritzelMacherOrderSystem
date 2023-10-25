@@ -1,3 +1,4 @@
+# This Python file uses the following encoding: utf-8
 # -----------------------------------
 # Dictonary Part
 stritzel_outside_sorts = {
@@ -18,7 +19,7 @@ stritzel_outside_sorts = {
 stritzel_inside_sorts = {
     "0": "Ohne",
     "1": "Nutella",
-    "2": "Weisse Schokoloade",
+    "2": "Weiße Schokoloade",
     "3": "Apfelmus",
 }
 
