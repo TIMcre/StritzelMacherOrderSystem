@@ -32,6 +32,8 @@ import csv
 from datetime import datetime
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+
 order_list = []
 
 
@@ -67,7 +69,7 @@ def add_history(order, file_name="order_history.csv"):
         writer = csv.DictWriter(file, fieldnames=fieldnames)
 
         if file.tell() == 0:
-            writer.writeheader()  # Write headers if the file is empty
+            writer.writeheader()
 
         writer.writerow(
             {
@@ -140,8 +142,6 @@ def submit():
     selected_outside = str(request.form["selected_outside"])
     selected_inside = str(request.form["selected_inside"])
 
-    print(selected_outside, selected_inside)
-
     if (
         selected_outside in stritzel_outside_sorts
         and selected_inside in stritzel_inside_sorts
@@ -149,9 +149,7 @@ def submit():
         code = f"{int(selected_outside):02}{int(selected_inside)}"
         order = convert_code_to_order(code)
         add_order(order_list, order)
-
-        print_orders(order_list, mode="service")
-
+        
         return redirect(url_for("service"))
     else:
         return "Invalid order selection."
@@ -162,9 +160,10 @@ def remove_oldest_order():
     if order_list:
         removed_order = remove_order(order_list)["order"]
         add_history(removed_order)
+        
 
     return redirect(url_for("production"))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)

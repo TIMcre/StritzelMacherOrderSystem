@@ -54,18 +54,17 @@
         {% if orders %}
         <ul>
             {% for order in orders %}
-            <li>{{ order.name.outside }} mit {{ order.name.inside }}</li>
+                <li>{{ order.name.outside }} mit {{ order.name.inside }}</li>
             {% endfor %}
         </ul>
         {% endif %}
-
     </div>
 </div>
 
-
+<button class="button website-link" onclick="window.location.href='/production'">switch mode</button>
+</div>
 
 
 <button class="button website-link" onclick="window.location.href='/production'">switch mode</button>
-
 
 {% endblock %}
