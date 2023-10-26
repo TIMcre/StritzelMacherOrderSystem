@@ -165,4 +165,4 @@ def remove_oldest_order():
 
 
 if __name__ == "__main__":
-    flask.run(app, debug=True)
+    Flask.run(app, debug=True)
