@@ -32,7 +32,6 @@ import csv
 from datetime import datetime
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
 order_list = []
 
