@@ -7,10 +7,8 @@
 
 {% block body %}
 <h1>Stritzel Orders</h1>
-
 <div class="container">
     <div class="left">
-        <form action="/submit" method="POST">    
             <table>
                 <tr>
                     <th>Outside</th>
@@ -22,7 +20,7 @@
                             {{ name }}
                         </td>
                         <td>
-                            <input type="radio" name="selected_outside" value="{{ key }}" {% if key == '0' %}checked{% endif %}>
+                            <input type="radio" name="selected_outside" class="selected_outside" value="{{ key }}" {% if key == '0' %}checked{% endif %}>
                         </td>
                     </tr>
                 {% endfor %}
@@ -39,32 +37,26 @@
                             {{ name }}
                         </td>
                         <td>
-                            <input type="radio" name="selected_inside" value="{{ key }}" {% if key == '0' %}checked{% endif %}>
+                            <input type="radio" name="selected_inside" class="selected_inside" value="{{ key }}" {% if key == "0" %}checked{% endif %}>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
 
-            <input class="button" type="submit" value="Submit Order">        
-        </form>
+            <button class="button" id="sendButton">Submit Order</button>
     </div>
 
     <div class="right">
         <h2>Current Orders:</h2>
-        {% if orders %}
-        <ul>
-            {% for order in orders %}
-                <li>{{ order.name.outside }} mit {{ order.name.inside }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        <div id="order-list">
+            <!-- Orders will be added here dynamically using JavaScript -->
+        </div>
     </div>
 </div>
-
-<button class="button website-link" onclick="window.location.href='/production'">switch mode</button>
 </div>
 
-
 <button class="button website-link" onclick="window.location.href='/production'">switch mode</button>
+
+
 
 {% endblock %}

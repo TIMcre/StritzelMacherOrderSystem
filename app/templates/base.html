@@ -5,6 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js" integrity="sha512-Xm9qbB6Pu06k3PUwPj785dyTl6oHxgsv9nHp7ej7nCpAqGZT3OZpsELuCYX05DdonFpTlBpXMOxjavIAIUwr0w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var socket = io.connect("https://redesigned-space-disco-74j7vvvv6x7cp67x-5000.app.github.dev/")
+            socket.on("connect", function() {
+            socket.send(JSON.stringify({"code": "connected"}));
+            });
+
+            socket.on("message", function(data) {
+                var order_list = JSON.parse(data);
+                displayOrders(order_list);
+            });
+
+            function displayOrders(orders) {
+                $("#order-list").empty();
+
+                orders.forEach(function(order) {
+                var orderText = `${order.name.outside} mit ${order.name.inside}`;
+                $("#order-list").append($("<p>").text(orderText));
+            });
+            };
+
+            $("#sendButton").on("click", function () {
+                var code = $(".selected_outside:checked").val().padStart(2, '0') + $(".selected_inside:checked").val();
+                socket.send(JSON.stringify({"code": code}));
+
+                const outsideButton = document.querySelector('[name="selected_outside"][value="0"]');
+                const insideButton = document.querySelector('[name="selected_inside"][value="0"]');
+
+                outsideButton.checked = true;
+                insideButton.checked = true;
+                });
+
+            $("#removeButton").on("click", function () {
+                socket.send(JSON.stringify({"code": "rm"}));
+            });
+        });
+    </script>
+    
     {% block head %}{% endblock %}
 </head>
 <body>
