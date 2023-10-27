@@ -25,13 +25,16 @@ stritzel_inside_sorts = {
 
 # -----------------------------------
 # Function Part
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, Response, json
+from flask_socketio import SocketIO, send, join_room, leave_room
 import sys
 import re
 import csv
 from datetime import datetime
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
+
 
 order_list = []
 
@@ -57,6 +60,7 @@ def remove_order(order_list, order_number=0):
         removed_order = order_list.pop(order_number)
     except:
         return None
+        print("failed")
 
     return {"list": order_list, "order": removed_order}
 
@@ -123,46 +127,53 @@ def history():
 
 @app.route("/production")
 def production():
-    return render_template("production.html", orders=order_list)
+    return render_template("production.html")
 
 
 @app.route("/service")
 def service():
     return render_template(
         "service.html",
-        orders=order_list,
         stritzel_outside_sorts=stritzel_outside_sorts,
         stritzel_inside_sorts=stritzel_inside_sorts,
     )
 
 
-@app.route("/submit", methods=["POST"])
-def submit():
-    selected_outside = str(request.form["selected_outside"])
-    selected_inside = str(request.form["selected_inside"])
+#------------------
+#Socketio
 
-    if (
-        selected_outside in stritzel_outside_sorts
-        and selected_inside in stritzel_inside_sorts
-    ):
-        code = f"{int(selected_outside):02}{int(selected_inside)}"
-        order = convert_code_to_order(code)
-        add_order(order_list, order)
-        
-        return redirect(url_for("service"))
-    else:
-        return "Invalid order selection."
+common_room = "common_room"
+
+@socketio.on("connect")
+def handel_connect():
+    join_room(common_room)
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    leave_room(common_room)
 
 
-@app.route("/remove_oldest_order", methods=["POST"])
-def remove_oldest_order():
-    if order_list:
-        removed_order = remove_order(order_list)["order"]
-        add_history(removed_order)
-        
 
-    return redirect(url_for("production"))
+@socketio.on("message")
+def handel_message(message):
+    #print("Recived message: " + message)
+
+    data = json.loads(message)
+
+    match data["code"]:
+        case "rm":
+            add_history(remove_order(order_list)["order"])
+        case "connected":
+            pass
+        case _:
+            add_order(order_list, convert_code_to_order(data["code"]))
+
+    #print(f"Answering message: {order_list}")
+    send(message=json.dumps(order_list), room=common_room)
 
 
 if __name__ == "__main__":
-    Flask.run(app, debug=True)
+    socketio.run(
+        app,
+        debug=True,
+    )

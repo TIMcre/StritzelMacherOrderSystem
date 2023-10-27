@@ -4,26 +4,21 @@
 <title>Stritzel Orders Production</title>
 {% endblock %}
 
+
 {% block body %}
 <h1>Stritzel Orders</h1>
+
 <div class="container">
 
     <div class="left">
         <h2>Current Orders:</h2>
-
-        {% if orders %}
-        <ul>
-            {% for order in orders %}
-                <li>{{ order.name.outside }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        <div id="order-list">
+            <!-- Orders will be added here dynamically using JavaScript -->
+        </div>
     </div>
 
     <div class="right">
-        <form action="/remove_oldest_order" method="POST">
-            <button type="submit" class="button" class="remove-button">Remove Oldest Order</button>
-        </form>
+        <button class="button" id="removeButton">Remove Oldest Order</button>
     </div>
 </div>
 
